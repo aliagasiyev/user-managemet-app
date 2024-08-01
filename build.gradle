@@ -4,7 +4,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.6'
 }
 
-group = 'az.edu.turing'
+group = 'com.boot'
 version = '0.0.1-SNAPSHOT'
 
 java {
@@ -13,36 +13,38 @@ java {
     }
 }
 
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    // Spring Boot Starters
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-logging'
+
+    // OpenAPI/Swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+
+    // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    // PostgreSQL
-    runtimeOnly 'org.postgresql:postgresql'
-
-    // MapStruct
-    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
-
-    // ModelMapper
-    implementation 'org.modelmapper:modelmapper:3.2.0'
-
-    // DevTools
+    // Development Tools
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // Database
+    runtimeOnly 'org.postgresql:postgresql'
 
     // Testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    // Add Hibernate dependency if needed
-    implementation 'org.hibernate:hibernate-core:6.2.7.Final'
-    implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.8.0'
-
 }
 
 tasks.named('test') {

@@ -1,4 +1,4 @@
-package az.edu.turing.usermanagementapp.model;
+package az.edu.turing.usermanagementapp.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
