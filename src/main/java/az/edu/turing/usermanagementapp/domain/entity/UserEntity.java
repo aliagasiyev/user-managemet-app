@@ -26,5 +26,7 @@ public class UserEntity {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Column(length = 1000000000) // Uzunluğu artırın
     private String profilePhoto;
+
 }

@@ -3,10 +3,12 @@ package az.edu.turing.usermanagementapp.service.impl;
 import az.edu.turing.usermanagementapp.domain.entity.UserEntity;
 import az.edu.turing.usermanagementapp.domain.repository.UserRepository;
 import az.edu.turing.usermanagementapp.mapper.UserMapper;
+import az.edu.turing.usermanagementapp.model.request.ImageRequest;
 import az.edu.turing.usermanagementapp.model.request.UserRequest;
 import az.edu.turing.usermanagementapp.model.response.UserResponse;
 import az.edu.turing.usermanagementapp.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
@@ -59,7 +62,7 @@ public class UserServiceImpl implements UserService {
             UserEntity userEntity = UserMapper.toEntity(userRequest);
             userEntity.setId(id); // Ensure ID is set for update
             UserEntity updatedUserEntity = userRepository.save(userEntity);
-            logger.info("Successfully updated user with id: {}", id);
+            logger.info("Successfully updated user witdh id: {}", id);
             return UserMapper.toResponse(updatedUserEntity);
         } else {
             logger.error("User not found for update with id: {}", id);
@@ -68,12 +71,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void updateUserImage(Long id, ImageRequest imageRequest) {
+        userRepository.findById(id)
+                .map(profile -> {
+                    profile.setProfilePhoto(imageRequest.userImage());
+                    return userRepository.save(profile);
+                })
+                .orElseThrow(RuntimeException::new);
+    }
+
+    @Override
     public void deleteUser(Long id) {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
             logger.info("Successfully deleted user with id: {}", id);
         } else {
-            logger.error("User not found with id: {}", id);
+            logger.error("User not found with special id: {}", id);
             //throw new RuntimeException("User not found with id: " + id);
         }
     }

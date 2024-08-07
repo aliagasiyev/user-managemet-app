@@ -1,5 +1,6 @@
 package az.edu.turing.usermanagementapp.controller;
 
+import az.edu.turing.usermanagementapp.model.request.ImageRequest;
 import az.edu.turing.usermanagementapp.model.request.UserRequest;
 import az.edu.turing.usermanagementapp.model.response.UserResponse;
 import az.edu.turing.usermanagementapp.service.UserService;
@@ -52,12 +53,12 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
 
-//    @PatchMapping("/{id}/image")
-//    public ResponseEntity<Void> updateUserImage(@PathVariable @NonNull Long id, @RequestBody @Valid ImageRequest imageRequest) {
-//        userService.updateUserImage(id, imageRequest);
-//        logger.info("Updated image for user with id: {}", id);
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
+    @PatchMapping("/{id}/image")
+    public ResponseEntity<Void> updateUserImage(@PathVariable @NonNull Long id, @RequestBody @Valid ImageRequest imageRequest) {
+        userService.updateUserImage(id, imageRequest);
+        logger.info("Updated image for user with id: {}", id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable @NonNull Long id) {
