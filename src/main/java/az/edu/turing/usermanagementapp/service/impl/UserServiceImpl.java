@@ -2,6 +2,7 @@ package az.edu.turing.usermanagementapp.service.impl;
 
 import az.edu.turing.usermanagementapp.domain.entity.UserEntity;
 import az.edu.turing.usermanagementapp.domain.repository.UserRepository;
+import az.edu.turing.usermanagementapp.exception.UserNotFoundException;
 import az.edu.turing.usermanagementapp.mapper.UserMapper;
 import az.edu.turing.usermanagementapp.model.request.ImageRequest;
 import az.edu.turing.usermanagementapp.model.request.UserRequest;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -24,13 +24,12 @@ public class UserServiceImpl implements UserService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Override
     public List<UserResponse> getAllUsers() {
         List<UserEntity> userEntities = userRepository.findAll();
-        List<UserResponse> userResponses = userEntities.stream()
-                .map(UserMapper::toResponse)
-                .collect(Collectors.toList());
+        List<UserResponse> userResponses = userMapper.toResponseList(userEntities);
         logger.info("Successfully loaded {} users", userResponses.size());
         return userResponses;
     }
@@ -39,31 +38,31 @@ public class UserServiceImpl implements UserService {
     public UserResponse getUserById(Long id) {
         Optional<UserEntity> userEntityOptional = userRepository.findById(id);
         if (userEntityOptional.isPresent()) {
-            UserResponse userResponse = UserMapper.toResponse(userEntityOptional.get());
+            UserResponse userResponse = userMapper.toResponse(userEntityOptional.get());
             logger.info("Successfully retrieved user with id: {}", id);
             return userResponse;
         } else {
-            logger.error("User not found with id: {}", id);
-            throw new RuntimeException("User not found with id: " + id); // Custom exception can be used here
+            logger.error("User not found with special id: {}", id);
+            throw new UserNotFoundException("User not found with id: " + id); // Custom exception can be used here
         }
     }
 
     @Override
     public UserResponse createUser(UserRequest userRequest) {
-        UserEntity userEntity = UserMapper.toEntity(userRequest);
+        UserEntity userEntity = userMapper.toEntity(userRequest);
         UserEntity savedUserEntity = userRepository.save(userEntity);
         logger.info("Successfully created user with id: {}", savedUserEntity.getId());
-        return UserMapper.toResponse(savedUserEntity);
+        return userMapper.toResponse(savedUserEntity);
     }
 
     @Override
     public UserResponse updateUser(Long id, UserRequest userRequest) {
         if (userRepository.existsById(id)) {
-            UserEntity userEntity = UserMapper.toEntity(userRequest);
+            UserEntity userEntity = userMapper.toEntity(userRequest);
             userEntity.setId(id); // Ensure ID is set for update
             UserEntity updatedUserEntity = userRepository.save(userEntity);
-            logger.info("Successfully updated user witdh id: {}", id);
-            return UserMapper.toResponse(updatedUserEntity);
+            logger.info("Successfully updated user with id: {}", id);
+            return userMapper.toResponse(updatedUserEntity);
         } else {
             logger.error("User not found for update with id: {}", id);
             throw new RuntimeException("User not found with id: " + id); // Custom exception can be used here
@@ -86,8 +85,8 @@ public class UserServiceImpl implements UserService {
             userRepository.deleteById(id);
             logger.info("Successfully deleted user with id: {}", id);
         } else {
-            logger.error("User not found with special id: {}", id);
-            //throw new RuntimeException("User not found with id: " + id);
+            logger.error("User not found with id: {}", id);
+            throw new UserNotFoundException("User not found with id: " + id);
         }
     }
 

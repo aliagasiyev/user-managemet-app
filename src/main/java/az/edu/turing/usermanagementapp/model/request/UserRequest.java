@@ -5,10 +5,10 @@ import jakarta.validation.constraints.NotNull;
 
 public record UserRequest(
         @NotBlank
-        String name,
+        String username,
         @NotNull
         Integer age,
         @NotBlank
-        String image
+        String profilePhoto
 ) {
 }

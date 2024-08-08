@@ -3,31 +3,18 @@ package az.edu.turing.usermanagementapp.mapper;
 import az.edu.turing.usermanagementapp.domain.entity.UserEntity;
 import az.edu.turing.usermanagementapp.model.request.UserRequest;
 import az.edu.turing.usermanagementapp.model.response.UserResponse;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-public class UserMapper {
+import java.util.List;
 
-    // Convert UserEntity to UserResponse
-    public static UserResponse toResponse(UserEntity userEntity) {
-        if (userEntity == null) {
-            return null;
-        }
-        return UserResponse.builder()
-                .id(userEntity.getId())
-                .name(userEntity.getUsername())
-                .age(userEntity.getAge())
-                .image(userEntity.getProfilePhoto())
-                .build();
-    }
+@Mapper(componentModel = "spring")
+public interface UserMapper {
 
-    // Convert UserRequest to UserEntity
-    public static UserEntity toEntity(UserRequest userRequest) {
-        if (userRequest == null) {
-            return null;
-        }
-        UserEntity userEntity = new UserEntity();
-        userEntity.setUsername(userRequest.name());
-        userEntity.setAge(userRequest.age());
-        userEntity.setProfilePhoto(userRequest.image());
-        return userEntity;
-    }
+
+    UserEntity toEntity(UserRequest userRequest);
+
+    UserResponse toResponse(UserEntity userEntity);
+
+    List<UserResponse> toResponseList(List<UserEntity> userEntityList);
 }
